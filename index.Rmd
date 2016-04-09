@@ -11,7 +11,7 @@ The data from this report comes from the reserach published in the following pap
 
 Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H. **Qualitative Activity Recognition of Weight Lifting Exercises.** *Proceedings of 4th International Conference in Cooperation with SIGCHI (Augmented Human '13)*. Stuttgart, Germany: ACM SIGCHI, 2013.
 
-Read more: http://groupware.les.inf.puc-rio.br/har#ixzz45Lm1GQPm
+Read more at this link: http://groupware.les.inf.puc-rio.br/har#ixzz45Lm1GQPm
 
 The researchers of this experiment have generously made their data publicly available for use.  In this study, 6 participants wore accelerometers on their belt, forearm, arm, and dumbell. They were asked to perform barbell lifts correctly and incorrectly in 5 different manners  The goal is to predict the manner in which they did the exercise. This manner is the "classe" variable in the training set. 
 
@@ -31,7 +31,7 @@ validation <- read.csv("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-
 head(training); str(training)
 head(validation); str(validation)
 ```
-The outputs from the "Analyze Data"" chunk of code has been left out due to its length.  What it shows is that in the validation set, there are some variables that have no values.  These variables in the training set will be of no use to us in a prediction model so we need to filter them out.  The first 4 columns of the data set are descriptive variables so also cannot be considered as predictor variables.
+The outputs from the "Analyze Data" chunk of code has been left out due to its length.  What it shows is that in the validation set, there are some variables that have no values.  These variables in the training set will be of no use to us in a prediction model so we need to filter them out.  The first 4 columns of the data set are descriptive variables so also cannot be considered as predictor variables.
 
 ```{r}
 #Remove unneccesary columns that have no entries in the validation set and the descriptive variables
@@ -40,7 +40,7 @@ training57 <- training[,keyvars]
 training53 <- training57[,-c(1:4)]
 dim(training53)
 ```
-The cleaned up data set has only 53 potential predictors to work with.
+The cleaned up data set has 53 potential predictors to work with.
 
 ##Building the Prediction Model
 ###Feature elimination

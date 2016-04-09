@@ -119,7 +119,7 @@ $(document).ready(function () {
 <h2>Introduction</h2>
 <p>The data from this report comes from the reserach published in the following paper:</p>
 <p>Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H. <strong>Qualitative Activity Recognition of Weight Lifting Exercises.</strong> <em>Proceedings of 4th International Conference in Cooperation with SIGCHI (Augmented Human ’13)</em>. Stuttgart, Germany: ACM SIGCHI, 2013.</p>
-<p>Read more: <a href="http://groupware.les.inf.puc-rio.br/har#ixzz45Lm1GQPm" class="uri">http://groupware.les.inf.puc-rio.br/har#ixzz45Lm1GQPm</a></p>
+<p>Read more at this link: <a href="http://groupware.les.inf.puc-rio.br/har#ixzz45Lm1GQPm" class="uri">http://groupware.les.inf.puc-rio.br/har#ixzz45Lm1GQPm</a></p>
 <p>The researchers of this experiment have generously made their data publicly available for use. In this study, 6 participants wore accelerometers on their belt, forearm, arm, and dumbell. They were asked to perform barbell lifts correctly and incorrectly in 5 different manners The goal is to predict the manner in which they did the exercise. This manner is the “classe” variable in the training set.</p>
 </div>
 <div id="loading-and-preprocessing-data" class="section level2">
@@ -134,14 +134,14 @@ validation &lt;- read.csv(&quot;https://d396qusza40orc.cloudfront.net/predmachle
 <pre class="r"><code>#Analyze Data
 head(training); str(training)
 head(validation); str(validation)</code></pre>
-<p>The outputs from the “Analyze Data”&quot; chunk of code has been left out due to its length. What it shows is that in the validation set, there are some variables that have no values. These variables in the training set will be of no use to us in a prediction model so we need to filter them out. The first 4 columns of the data set are descriptive variables so also cannot be considered as predictor variables.</p>
+<p>The outputs from the “Analyze Data” chunk of code has been left out due to its length. What it shows is that in the validation set, there are some variables that have no values. These variables in the training set will be of no use to us in a prediction model so we need to filter them out. The first 4 columns of the data set are descriptive variables so also cannot be considered as predictor variables.</p>
 <pre class="r"><code>#Remove unneccesary columns that have no entries in the validation set and the descriptive variables
 keyvars &lt;- sapply(validation, is.numeric)
 training57 &lt;- training[,keyvars]
 training53 &lt;- training57[,-c(1:4)]
 dim(training53)</code></pre>
 <pre><code>## [1] 19622    53</code></pre>
-<p>The cleaned up data set has only 53 potential predictors to work with.</p>
+<p>The cleaned up data set has 53 potential predictors to work with.</p>
 </div>
 <div id="building-the-prediction-model" class="section level2">
 <h2>Building the Prediction Model</h2>
