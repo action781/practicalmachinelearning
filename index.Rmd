@@ -5,19 +5,95 @@ date: "April 3, 2016"
 output: html_document
 ---
 
+##Introduction
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+The data from this report comes from the reserach published in the following paper:
 
-```{r cars}
-summary(cars)
+Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H. **Qualitative Activity Recognition of Weight Lifting Exercises.** *Proceedings of 4th International Conference in Cooperation with SIGCHI (Augmented Human '13)*. Stuttgart, Germany: ACM SIGCHI, 2013.
+
+Read more: http://groupware.les.inf.puc-rio.br/har#ixzz45Lm1GQPm
+
+The researchers of this experiment have generously made their data publicly available for use.  In this study, 6 participants wore accelerometers on their belt, forearm, arm, and dumbell. They were asked to perform barbell lifts correctly and incorrectly in 5 different manners  The goal is to predict the manner in which they did the exercise. This manner is the "classe" variable in the training set. 
+
+##Loading and Preprocessing data
+This report will make use of several libraries loaded below.  The analysis will be conducted on the data set made publicly available at the links shown in the code below.
+```{r, warning = FALSE, message=FALSE}
+#Load necessary libraries
+library(caret); library(e1071); library(knitr); library(rpart); library(randomForest); library(dplyr); library(mlbench)
+
+#Take exploratory look of data
+training <- read.csv("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv")
+validation <- read.csv("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv")
 ```
 
-## Including Plots
+```{r, results = 'hide'}
+#Analyze Data
+head(training); str(training)
+head(validation); str(validation)
+```
+The outputs from the "Analyze Data"" chunk of code has been left out due to its length.  What it shows is that in the validation set, there are some variables that have no values.  These variables in the training set will be of no use to us in a prediction model so we need to filter them out.  The first 4 columns of the data set are descriptive variables so also cannot be considered as predictor variables.
 
-You can also embed plots, for example:
+```{r}
+#Remove unneccesary columns that have no entries in the validation set and the descriptive variables
+keyvars <- sapply(validation, is.numeric)
+training57 <- training[,keyvars]
+training53 <- training57[,-c(1:4)]
+dim(training53)
+```
+The cleaned up data set has only 53 potential predictors to work with.
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+##Building the Prediction Model
+###Feature elimination
+Some of the variables may be strongly correlated to eachother which would reduce the accuracy of the prediction model, so I will find and eliminate the variables that are strongly correlated to eachother.  I will use a cutoff of r > 0.75 to determine which variables are strongly correlated.  Of the highly correlated pairs of variables, I will remove the variables with the largest mean absolute correlation.
+```{r}
+#Create correlation matrix on data except classe variable
+correlationMatrix <- cor(training53[,-53])
+
+#Get the column indices of the features that are strongly correlated with one another
+highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.75)
+
+#New data set without variables that had the largest mean absolute correlation
+training32 <- training53[,-c(highlyCorrelated)]
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+###Training the model
+To train a model, I will partition my data set into a training set containing 60% of the data and a testing set containing 40% of the data.  I will use 3-fold cross validation, which Prof. Gutierrez-Osuna states: "For large datasets, even 3-Fold Cross Validation will be quite accurate." http://research.cs.tamu.edu/prism/lectures/iss/iss_l13.pdf
+
+I will then use the random forests method to train the model.
+```{r}
+#Set seed for reproducibility
+set.seed(12121)
+
+#Create training and test partitions
+intrain <- createDataPartition(y = training32$classe, p = 0.6, list = FALSE)
+finaltrainingset <- training32[intrain,]
+finaltestingset <- training32[-intrain,]
+
+#Use 3 fold cross validation
+control <- trainControl(method = "cv", number = 3)
+
+#Create predictive model by random forests method
+fitmod <- train(classe~., data = finaltrainingset, method = "rf", trControl = control) 
+```
+
+
+###Evaluating the results and out of sample error
+Now we are ready to see the results of the prediction on the testing set.
+```{r}
+#Use model to predict "classe" variable on the testing partition
+pred <- predict(fitmod, finaltestingset)
+
+#Print confusion matrix to see results of predictions
+confusionMatrix(pred, finaltestingset$classe)
+```
+The confusion matrix shows us an accuracy of 99.08% so the out of sample error is 0.92%.
+
+###Variable importance
+```{r}
+#Find the variable importance and print plot
+important <- varImp(fitmod)
+plot(important)
+```
+
+It's worth seeing that some variables (yaw_belt) are of high importance and some (gyros_arm_z) are not.  Other models could be retrained leaving out the lesser important variables if one desired to do so.
