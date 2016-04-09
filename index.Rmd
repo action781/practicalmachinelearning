@@ -1,5 +1,5 @@
 ---
-title: "Practical Machine Learning Course Project"
+title: "Predicting Manners of Weight Lifting Exercises"
 author: "Billy Jackson"
 date: "April 3, 2016"
 output: html_document
@@ -7,13 +7,13 @@ output: html_document
 
 ##Introduction
 
-The data from this report comes from the reserach published in the following paper:
+The data from this report comes from the research published in the following paper:
 
 Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H. **Qualitative Activity Recognition of Weight Lifting Exercises.** *Proceedings of 4th International Conference in Cooperation with SIGCHI (Augmented Human '13)*. Stuttgart, Germany: ACM SIGCHI, 2013.
 
 Read more at this link: http://groupware.les.inf.puc-rio.br/har#ixzz45Lm1GQPm
 
-The researchers of this experiment have generously made their data publicly available for use.  In this study, 6 participants wore accelerometers on their belt, forearm, arm, and dumbell. They were asked to perform barbell lifts correctly and incorrectly in 5 different manners  The goal is to predict the manner in which they did the exercise. This manner is the "classe" variable in the training set. 
+The researchers of this experiment have generously made their data publicly available for use.  In this study, 6 participants wore accelerometers on their belt, forearm, arm, and dumbell. They were asked to perform barbell lifts correctly and incorrectly in 5 different manners  The goal is to predict the manner in which 20 participants in a validation set did the exercise. This manner is the "classe" variable in the training set. 
 
 ##Loading and Preprocessing data
 This report will make use of several libraries loaded below.  The analysis will be conducted on the data set made publicly available at the links shown in the code below.
@@ -97,3 +97,11 @@ plot(important)
 ```
 
 It's worth seeing that some variables (yaw_belt) are of high importance and some (gyros_arm_z) are not.  Other models could be retrained leaving out the lesser important variables if one desired to do so.
+
+##Final Predictions
+```{r}
+predict(fitmod, validation)
+```
+These results turned out to have an accuracy of 20/20 when submitted into the quiz.
+
+*This report was done as a course project for Practical Machine Learning, the 8th course in the Data Science Specialization offered though Coursera.*
