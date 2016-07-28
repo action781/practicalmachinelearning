@@ -21,7 +21,7 @@ This report will make use of several libraries loaded below.  The analysis will 
 #Load necessary libraries
 library(caret); library(e1071); library(knitr); library(rpart); library(randomForest); library(dplyr); library(mlbench)
 
-#Take exploratory look of data
+#Load data
 training <- read.csv("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv")
 validation <- read.csv("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv")
 ```
@@ -34,7 +34,7 @@ head(validation); str(validation)
 The outputs from the "Analyze Data" chunk of code has been left out due to its length.  What it shows is that in the validation set, there are some variables that have no values.  These variables in the training set will be of no use to us in a prediction model so we need to filter them out.  The first 4 columns of the data set are descriptive variables so also cannot be considered as predictor variables.
 
 ```{r}
-#Remove unneccesary columns that have no entries in the validation set and the descriptive variables
+#Remove the descriptive variables and unneccesary columns that have no entries in the validation set 
 keyvars <- sapply(validation, is.numeric)
 training57 <- training[,keyvars]
 training53 <- training57[,-c(1:4)]
@@ -96,7 +96,7 @@ important <- varImp(fitmod)
 plot(important)
 ```
 
-It's worth seeing that some variables (yaw_belt) are of high importance and some (gyros_arm_z) are not.  Other models could be retrained leaving out the lesser important variables if one desired to do so.
+It's worth seeing that some variables (yaw belt) are of high importance and some (gyros arm z) are not.  Other models could be retrained leaving out the lesser important variables if one desired to do so.
 
 ##Final Predictions
 ```{r}
