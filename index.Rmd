@@ -27,11 +27,11 @@ validation <- read.csv("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-
 ```
 
 ```{r, results = 'hide'}
-#Analyze Data
+#Exploratory Analysis of Data
 head(training); str(training)
 head(validation); str(validation)
 ```
-The outputs from the "Analyze Data" chunk of code has been left out due to its length.  What it shows is that in the validation set, there are some variables that have no values.  These variables in the training set will be of no use to us in a prediction model so we need to filter them out.  The first 4 columns of the data set are descriptive variables so also cannot be considered as predictor variables.
+The outputs from the exploratory analysis chunk of code has been left out due to its length.  What it shows is that in the validation set, there are some variables that have no values.  These variables in the training set will be of no use to us in a prediction model so we need to filter them out.  The first 4 columns of the data set are descriptive variables so also cannot be considered as predictor variables.
 
 ```{r}
 #Remove the descriptive variables and unneccesary columns that have no entries in the validation set 
@@ -54,11 +54,12 @@ highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.75)
 
 #New data set without variables that had the largest mean absolute correlation
 training32 <- training53[,-c(highlyCorrelated)]
+dim(training32)
 ```
 
 
 ###Training the model
-To train a model, I will partition my data set into a training set containing 60% of the data and a testing set containing 40% of the data.  I will use 3-fold cross validation, which Prof. Gutierrez-Osuna states: "For large datasets, even 3-Fold Cross Validation will be quite accurate." http://research.cs.tamu.edu/prism/lectures/iss/iss_l13.pdf
+To train a model on my 32 potential predictor variables, I will partition my data set into a training set containing 60% of the data and a testing set containing 40% of the data.  I will use 3-fold cross validation, which Prof. Gutierrez-Osuna states: "For large datasets, even 3-Fold Cross Validation will be quite accurate." http://research.cs.tamu.edu/prism/lectures/iss/iss_l13.pdf
 
 I will then use the random forests method to train the model.
 ```{r}
@@ -99,6 +100,7 @@ plot(important)
 It's worth seeing that some variables (yaw belt) are of high importance and some (gyros arm z) are not.  Other models could be retrained leaving out the lesser important variables if one desired to do so.
 
 ##Final Predictions
+The overall goal was to create a model fitmod to predict what the manner of the exercise was for 20 observations in the validation set.
 ```{r}
 predict(fitmod, validation)
 ```
